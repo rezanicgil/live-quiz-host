@@ -3,7 +3,7 @@
    Yayın uygulamasının arayüzünün kapattığı yerlere okunacak hiçbir şey konmaz: üst 200 px, alt 140 px (y > 1780) ve sol alttaki sohbet
    (x < 700, y > 1250). Sunucu bölgesinde okunacak her şey sağ sütundadır (x 700–1040); solda yalnız Tarçın durur.
    Animasyonlar yalnız transform/opacity kullanır (OBS tarayıcı kaynağında 60 fps). */
-@font-face{font-family:Nunito;src:url('/assets/fonts/Nunito-Variable.ttf') format('truetype');font-weight:200 1000;font-display:block}
+@font-face{font-family:Nunito;src:url('assets/fonts/Nunito-Variable.ttf') format('truetype');font-weight:200 1000;font-display:block}
 :root{--ink:#2A1F63;--yellow:#FFD34D;--pink:#FF5C8A;--teal:#2ED3B7;--cream:#FFF3DA;--lav:#C3B9FA;--pop:cubic-bezier(.3,1.5,.5,1);--out:cubic-bezier(.2,.8,.3,1)}
 *{box-sizing:border-box}
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0D0826;font-family:Nunito,'Segoe UI Emoji','Segoe UI',system-ui,sans-serif}

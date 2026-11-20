@@ -1,4 +1,4 @@
-@font-face{font-family:Nunito;src:url('/assets/fonts/Nunito-Variable.ttf')}
+@font-face{font-family:Nunito;src:url('assets/fonts/Nunito-Variable.ttf')}
 body{background:#151425;font-family:Nunito,"Segoe UI",system-ui,sans-serif}
 header{padding:16px max(22px,calc((100vw - 1456px)/2));background:#222036}
 section{background:#232136;border-color:#45405b;border-radius:17px}

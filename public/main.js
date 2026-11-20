@@ -2,9 +2,9 @@
 // ?mock=1 ile sunucusuz çalışır: /mock.js aynı iletileri aynı `deliver` yolundan verir.
 // Yerleşim kuralı: soru alanını (y 220–1015) kürsü, mola ve açılış dışında hiçbir kutlama kapatamaz; sunucu bölgesinde okunacak
 // her şey sağ sütundadır (x 700–1040, y < 1780): yayın uygulamasının sohbeti ve alt çubuğu oraya gelmez.
-import { createHost } from '/host.js';
-import { createSound } from '/sound.js';
-import { createFx } from '/fx.js';
+import { createHost } from './host.js';
+import { createSound } from './sound.js';
+import { createFx } from './fx.js';
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -821,7 +821,7 @@ sound.music(true); setTimeout(syncSound, 300);
 async function main() {
   try { await Promise.race([Promise.all([document.fonts.load('900 40px Nunito'), document.fonts.ready]), new Promise((r) => setTimeout(r, 2500))]); } catch { /* yazı tipi gecikse de sahne açılır */ }
   setTitle(S.title); updateConn();
-  if (MOCK) { const { startMock } = await import('/mock.js'); startMock(deliver, { scene: params.get('scene') }); }
+  if (MOCK) { const { startMock } = await import('./mock.js'); startMock(deliver, { scene: params.get('scene') }); }
   else connect();
 }
 window.__show = { deliver, host, sound, fx, fxh, get state() { return S.st; }, get phase() { return S.phase; } };
