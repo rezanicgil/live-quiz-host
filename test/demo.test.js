@@ -3,6 +3,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { demoLines } from '../public/mock.js';
@@ -20,6 +21,16 @@ test('demo ses paketi: tam döngünün her cümlesinin kaydı var, fazlası yok'
   }
   const files = fs.readdirSync(path.join(PUBLIC, 'demo-voice')).filter((f) => f.endsWith('.mp3'));
   assert.equal(files.length, lines.length, 'kullanılmayan kayıt yok');
+});
+
+test('demo derlemesi: yalnız sahne ve ses paketi girer, sayfa sunucusuz kipte açılır', async (t) => {
+  const { buildDemo } = await import('../tools/demo-derle.mjs');
+  const out = fs.mkdtempSync(path.join(os.tmpdir(), 'demo-derle-')); t.after(() => fs.rmSync(out, { recursive: true, force: true }));
+  const files = buildDemo(out).map((f) => f.replaceAll('\\', '/'));
+  assert.ok(files.includes('index.html') && files.includes('mock.js') && files.includes('demo-voice/manifest.json') && files.includes('assets/fonts/Nunito-Variable.ttf'));
+  assert.deepEqual(files.filter((f) => /panel|studio|\.wav$/.test(f)), [], 'panel ve canlı şov kayıtları demoya girmez');
+  assert.match(fs.readFileSync(path.join(out, 'index.html'), 'utf8'), /<html lang="tr" data-mock="1">/);
+  assert.doesNotMatch(fs.readFileSync(path.join(PUBLIC, 'index.html'), 'utf8'), /data-mock/, 'kaynak sayfa değişmez');
 });
 
 test('sahne alt klasörden açılabilir: sayfa, betikler ve stiller kök dizine bağlı adres kullanmaz', () => {

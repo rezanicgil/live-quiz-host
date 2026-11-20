@@ -8,7 +8,7 @@ import { createFx } from './fx.js';
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
-const MOCK = params.get('mock') === '1';
+const MOCK = params.get('mock') === '1' || document.documentElement.dataset.mock === '1';   // <html data-mock="1">: statik demo derlemesi (tools/demo-derle.mjs)
 const TR = 'tr-TR';
 const up = (s) => String(s ?? '').toLocaleUpperCase(TR);
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
