@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bil Bakalım — panel</title>
+<link rel="icon" href="data:,">
+<style>
+  :root { color-scheme: dark; --bg:#14122b; --card:#1f1c40; --line:#35316a; --text:#f4f1ff; --dim:#a9a4d6; --yellow:#ffd34d; --pink:#ff5c8a; --teal:#2ed3b7; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:15px/1.45 "Segoe UI", system-ui, sans-serif; }
+  header { display:flex; align-items:center; gap:14px; padding:16px 22px; border-bottom:1px solid var(--line); flex-wrap:wrap; }
+  header h1 { font-size:20px; margin:0; } header h1 b { color:var(--yellow); }
+  .pill { padding:4px 12px; border-radius:99px; background:#2b2757; color:var(--dim); font-size:13px; white-space:nowrap; }
+  .pill.ok { background:#12453c; color:#8ff1dd; } .pill.warn { background:#55321a; color:#ffc98a; } .pill.demo { background:var(--pink); color:#fff; font-weight:700; }
+  main { display:grid; grid-template-columns:repeat(auto-fit,minmax(330px,1fr)); gap:16px; padding:18px 22px 40px; max-width:1500px; margin:0 auto; }
+  section { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px 18px; min-width:0; }
+  section.wide { grid-column:1/-1; }
+  h2 { font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); margin:0 0 12px; }
+  label { display:block; margin:8px 0 4px; color:var(--dim); font-size:13px; }
+  input[type=text], input[type=number] { width:100%; padding:9px 11px; border-radius:9px; border:1px solid var(--line); background:#151331; color:var(--text); font:inherit; }
+  input[type=range] { width:100%; accent-color:var(--yellow); }
+  button { padding:9px 14px; border-radius:9px; border:1px solid var(--line); background:#2b2757; color:var(--text); font:inherit; cursor:pointer; }
+  button:hover { background:#383376; } button.main { background:var(--yellow); color:#241b00; border-color:transparent; font-weight:700; }
+  button.danger { background:#4a1f33; border-color:#7a3352; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:10px; } .row > input[type=text] { flex:1; min-width:140px; }
+  .check { display:flex; gap:9px; align-items:flex-start; margin:9px 0; color:var(--text); font-size:14px; } .check input { margin-top:3px; accent-color:var(--yellow); }
+  .big { font-size:22px; font-weight:700; } .dim { color:var(--dim); font-size:13px; } .msg { min-height:20px; margin-top:8px; font-size:13px; color:var(--teal); }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  #log { max-height:330px; overflow:auto; font:13px/1.5 Consolas, monospace; } #log div { padding:2px 0; border-bottom:1px solid #2a2756; overflow-wrap:anywhere; } #log b { color:var(--yellow); font-weight:600; }
+  table { width:100%; border-collapse:collapse; font-size:14px; } td { padding:4px 6px; border-bottom:1px solid #2a2756; } td:last-child { text-align:right; font-weight:700; color:var(--yellow); }
+  a { color:var(--teal); }
+</style>
+<link rel="stylesheet" href="/studio.css">
+</head>
+<body>
+<header>
+  <h1><b>Bil Bakalım</b> · kontrol paneli</h1>
+  <span id="demo" class="pill demo" hidden>PROVA</span>
+  <span id="live" class="pill">Kaynak: —</span><span id="tts" class="pill">Ses: —</span><span id="ai" class="pill">Claude: —</span>
+  <span class="pill" id="bank">— soru</span>
+  <a href="/stage" target="_blank" rel="noopener">Sahneyi aç ↗</a>
+</header>
+<main>
+  <section class="wide studio" aria-label="Tarçın'ın stüdyosu">
+    <div><h2>Tarçın'ın stüdyosu</h2>
+      <div class="look-list" role="group" aria-label="Sunucu görünümü">
+        <button class="look" data-look="classic" aria-pressed="true"><span class="portrait"></span><b>Klasik Tarçın</b></button>
+        <button class="look" data-look="detective" aria-pressed="false"><span class="portrait"></span><b>Dedektif</b></button>
+        <button class="look" data-look="dj" aria-pressed="false"><span class="portrait"></span><b>Gece DJ’i</b></button>
+      </div>
+    </div>
+    <div><label for="pace">Soru temposu</label>
+      <select id="pace"><option value="standard">Klasik · yayın ayarı</option><option value="relaxed">Rahat · 45 saniye</option><option value="quick">Hızlı · 25 saniye</option></select>
+      <p class="dim">Tempo değişikliği bir sonraki soruyla başlar.</p>
+      <div id="timeline" aria-label="Tur akışı"></div>
+      <div class="legend"><span><i></i>Bilindi</span><span><i class="missed"></i>Süre doldu</span></div>
+      <div class="msg" id="studio-msg" role="status"></div>
+    </div>
+  </section>
+  <section>
+    <h2>Olay kaynağı</h2>
+    <div class="msg" id="live-detail"></div>
+    <p class="dim">OBS tarayıcı kaynağı: <code id="stage-url"></code></p>
+  </section>
+  <section>
+    <h2>Şov</h2>
+    <div class="big" id="phase">—</div>
+    <div class="dim" id="question">—</div>
+    <div class="row"><button id="pause">Duraklat</button><button id="skip">Soruyu geç</button><button id="restart" title="Açılış anonsuyla birinci turdan başlatır; tur puanları sıfırlanır">Açılıştan başlat</button><button id="demo-btn">Provayı aç</button></div>
+    <div class="row"><button id="finish" type="button" aria-controls="finish-confirm">🏁 Oyunu bitir</button></div>
+    <div id="finish-confirm" hidden><p>Yarışmayı bitirip OBS sahnesinde gecenin sonuçlarını gösterelim mi?</p><div class="row"><button type="button" id="finish-yes">Final ekranını aç</button><button type="button" id="finish-no">Oyuna dön</button></div></div>
+    <p class="dim">İzleyici: <b id="viewers">0</b> · Beğeni: <b id="likes">0</b> · Bu gece bilinen: <b id="solved">0</b> · Rekor: <b id="record">0</b></p>
+    <table id="leaders"></table>
+    <p class="dim" id="people-stats"></p>
+  </section>
+  <section>
+    <h2>Ses</h2>
+    <div id="pocket-voices" hidden>
+      <label for="pocketVoice">Tarçın’ın sesi</label>
+      <select id="pocketVoice"><option value="female_2">Sıcak ve samimi · kadın sesi</option><option value="male_2">Canlı ve enerjik · erkek sesi</option></select>
+    </div>
+    <label for="delivery">Tarçın’ın konuşma tonu</label>
+    <select id="delivery"><option value="natural">Doğal sohbet</option><option value="presenter">Enerjik sunucu</option></select>
+    <label for="murmur">Ses kaydı yetişmezse</label>
+    <select id="murmur"><option value="miyav">Miyavlasın</option><option value="bip">Bip bip mırıldansın</option><option value="off">Sessiz kalsın (yalnız alt yazı)</option></select>
+    <div class="row"><button id="murmur-test" type="button">Yedek sesi sahnede dene</button><button id="cat-hello" type="button">🐾 Tarçın miyavlasın</button></div>
+    <label>Örnek replik dinle (yayındaki ses ve tonla)</label>
+    <div class="row" id="samples"><button data-sample="acilis" type="button">Açılış</button><button data-sample="hosgeldin" type="button">Karşılama</button><button data-sample="bildi" type="button">Bildi</button><button data-sample="takip" type="button">Takip</button><button data-sample="mola" type="button">Mola sorusu</button></div>
+    <div class="row"><button id="listen">Burada dinle</button><span class="msg" id="voice-msg" role="status"></span></div>
+    <audio id="voice-sample" controls hidden></audio>
+    <label>Sunucunun sesi <span id="o-voice"></span></label><input type="range" id="v-voice" min="0" max="100">
+    <label>Fon ritmi <span id="o-music"></span></label><input type="range" id="v-music" min="0" max="100">
+    <label>Efektler <span id="o-fx"></span></label><input type="range" id="v-fx" min="0" max="100">
+    <p class="dim" id="tts-detail"></p>
+  </section>
+  <section>
+    <h2>Seçenekler</h2>
+    <label class="check"><input type="checkbox" id="ai-on"> Serbest sohbet: Tarçın, hazır cevabı olmayan yorumlara Claude ile cevap versin <span class="dim" id="ai-detail"></span></label>
+    <label class="check"><input type="checkbox" id="followReminder"> Molada yumuşak takip hatırlatması (en çok 5 dakikada bir)</label>
+    <label class="check"><input type="checkbox" id="spokenFacts"> Cevaptan sonra ara sıra kısa bilgiyi sesli oku</label>
+    <form class="key-form" id="claude-form">
+      <label for="claude-key">Claude API anahtarı · bu oturum için</label>
+      <div class="row"><input type="password" id="claude-key" required autocomplete="off" spellcheck="false" placeholder="sk-ant-…"><button>Etkinleştir</button></div>
+      <p class="dim">Bilgisayarında kalıcı ayar için CLAUDE_ANAHTARI.bat dosyasını açabilirsin.</p>
+    </form>
+    <div class="msg" id="opt-msg" role="status"></div>
+  </section>
+  <section>
+    <h2>Deneme (yayında görünür!)</h2>
+    <div class="row"><input id="sim-nick" type="text" value="Deneme" maxlength="20"><button data-sim="join">Katıl</button><button data-sim="answer">Doğru cevap</button></div>
+    <div class="row"><input id="sim-text" type="text" placeholder="yorum ya da tahmin" maxlength="100"><button id="sim-chat">Yorum yaz</button></div>
+    <div class="row"><button data-sim="follow">Takip</button><button data-sim="share">Paylaşım</button><button data-sim="like">Beğeni ×25</button></div>
+    <div class="msg" id="sim-msg"></div>
+  </section>
+  <section class="wide">
+    <h2>Günlük</h2>
+    <div id="log"></div>
+  </section>
+</main>
+<script type="module">
+import { createHost } from '/host.js';
+const $ = (id) => document.getElementById(id);
+$('stage-url').textContent = new URL('/stage', location.href).href;
+const PHASE = { lobby: 'Açılış', intro: 'Soru geliyor', ask: 'Soru açık', solved: 'Bilindi', timeout: 'Süre bitti', podium: 'Kürsü', break: 'Sohbet molası', ended: 'Final ekranı' };
+const LIVE = { idle: 'dış kaynak yok', connecting: 'bağlanıyor', waiting: 'bekleniyor', connected: 'bağlı', warning: 'uyarı', ended: 'sona erdi' };
+for (const button of document.querySelectorAll('button[data-look]')) {
+  const portrait = createHost(button.querySelector('.portrait'));
+  portrait.el.querySelector('svg').setAttribute('viewBox', '105 14 390 390');
+  portrait.setLook(button.dataset.look);
+  button.onclick = async () => {
+    if (await cmd({ type: 'settings', look: button.dataset.look }, 'studio-msg')) {
+      portrait.gesture(({ classic: 'wave', detective: 'listen', dj: 'drum' })[button.dataset.look]);
+    }
+  };
+}
+$('pace').onchange = () => cmd({ type: 'settings', pace: $('pace').value }, 'studio-msg');
+$('delivery').onchange = () => cmd({ type: 'settings', delivery: $('delivery').value }, 'voice-msg');
+$('murmur').onchange = () => cmd({ type: 'settings', murmur: $('murmur').value }, 'voice-msg');
+$('pocketVoice').onchange = () => cmd({ type: 'settings', pocketVoice: $('pocketVoice').value }, 'voice-msg');
+$('claude-form').onsubmit = async (event) => {
+  event.preventDefault();
+  const field = $('claude-key'), key = field.value.trim();
+  field.value = '';
+  if (await post('/api/claude-key', { key }, 'opt-msg')) {
+    $('ai-on').checked = true;
+    $('opt-msg').textContent = 'Anahtar doğrulandı; bu oturum için etkin. Üstte "Claude: bağlı ✓" yazar.';
+  }
+};
+let listenSample = null;
+$('murmur-test').onclick = () => cmd({ type: 'murmurTest' }, 'voice-msg');
+$('cat-hello').onclick = () => cmd({ type: 'catHello' }, 'voice-msg');
+for (const b of document.querySelectorAll('#samples [data-sample]')) b.onclick = () => { listenSample = b.dataset.sample; $('listen').onclick().finally(() => { listenSample = null; }); };
+$('listen').onclick = async () => {
+  const button = $('listen'), sample = $('voice-sample');
+  button.disabled = true;
+  sample.pause(); sample.hidden = true; $('voice-msg').textContent = 'Ses hazırlanıyor…';
+  try {
+    const res = await fetch('/api/voice-preview', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(listenSample ? { sample: listenSample } : {}) });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Ses hazırlanamadı.');
+    sample.src = data.url; sample.hidden = false; sample.volume = Number($('v-voice').value) / 100;
+    $('voice-msg').textContent = data.text ? '“' + data.text + '”' : '';
+    await sample.play().catch(() => { $('voice-msg').textContent = 'Dinlemek için oynat düğmesine bas.'; });
+  } catch (error) { $('voice-msg').textContent = error.message; }
+  finally { button.disabled = false; }
+};
+let first = true, paused = false, demo = false;
+async function post(path, body, target) {
+  try {
+    const res = await fetch(path, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }), data = await res.json().catch(() => ({}));
+    if (target) $(target).textContent = res.ok ? 'Tamam.' : (data.error || 'Olmadı');
+    refresh(); return res.ok;
+  } catch { if (target) $(target).textContent = 'Sunucuya ulaşılamadı'; return false; }
+}
+const cmd = (body, target) => post('/api/cmd', body, target), sim = (body) => post('/api/sim', { nick: $('sim-nick').value || 'Deneme', ...body }, 'sim-msg');
+$('restart').onclick = () => cmd({ type: 'restart' });
+$('finish').onclick = () => { $('finish-confirm').hidden = false; $('finish-no').focus(); };
+$('finish-no').onclick = () => { $('finish-confirm').hidden = true; $('finish').focus(); };
+$('finish-yes').onclick = async () => { if (await cmd({ type: 'finish' })) $('finish-confirm').hidden = true; };
+$('pause').onclick = () => cmd({ type: 'pause' }); $('skip').onclick = () => cmd({ type: 'skip' });
+$('demo-btn').onclick = () => cmd({ type: 'demo', on: !demo });
+for (const k of ['voice', 'music', 'fx']) $('v-' + k).oninput = () => { $('o-' + k).textContent = $('v-' + k).value; cmd({ type: 'settings', volumes: { [k]: $('v-' + k).value / 100 } }); };
+for (const k of ['followReminder', 'spokenFacts']) $(k).onchange = () => cmd({ type: 'settings', [k]: $(k).checked }, 'opt-msg');
+$('ai-on').onchange = () => cmd({ type: 'settings', ai: $('ai-on').checked }, 'opt-msg');
+for (const b of document.querySelectorAll('[data-sim]')) b.onclick = () => sim({ type: b.dataset.sim, count: 25 });
+$('sim-chat').onclick = () => { if ($('sim-text').value.trim()) sim({ type: 'chat', text: $('sim-text').value }).then(() => { $('sim-text').value = ''; }); };
+$('sim-text').onkeydown = (e) => { if (e.key === 'Enter') $('sim-chat').click(); };
+async function refresh() {
+  let s; try { s = await (await fetch('/api/state')).json(); } catch { $('live').textContent = 'Sunucu kapalı'; $('live').className = 'pill warn'; return; }
+  demo = !!s.demo; paused = !!s.paused; $('demo').hidden = !demo; $('demo-btn').textContent = demo ? 'Provayı kapat' : 'Provayı aç'; $('pause').textContent = paused ? 'Sürdür' : 'Duraklat';
+  for (const id of ['finish','pause','skip']) $(id).disabled = s.phase === 'ended';
+  if (s.phase === 'ended') $('finish-confirm').hidden = true;
+  $('live').textContent = 'Kaynak: ' + (demo ? 'prova' : LIVE[s.live.state] || s.live.state); $('live').className = 'pill ' + (s.live.state === 'connected' ? 'ok' : demo || s.live.state === 'idle' ? '' : 'warn');
+  $('live-detail').textContent = demo ? 'Kaynak: prova izleyicisi' : s.live.detail || 'Kaynak: ' + (LIVE[s.live.state] || s.live.state);
+  const pocket = s.tts.provider === 'pocket';
+  $('pocket-voices').hidden = !pocket;
+  if (pocket && document.activeElement !== $('pocketVoice')) $('pocketVoice').value = s.settings.pocketVoice;
+  if (document.activeElement !== $('murmur') && s.settings.murmur) $('murmur').value = s.settings.murmur;
+  if (s.tts.fallback) { $('tts').textContent = 'Ses: Windows (yedek)'; $('tts').className = 'pill warn'; $('tts-detail').textContent = 'Pocket şu an konuşamıyor, Tarçın susmasın diye Windows sesi devrede' + (s.tts.reason ? ' · ' + s.tts.reason : '') + '. Pocket düzelince kendiliğinden geri döner.'; } else {
+  $('tts').textContent = 'Ses: ' + ({ pocket: s.tts.ready ? 'Pocket Türkçe' : s.tts.unavailable ? 'Pocket açılamadı' : 'Pocket yükleniyor…', local: 'bilgisayarın sesi', azure: 'Azure doğal ses', off: 'kapalı' }[s.tts.provider] || s.tts.provider);
+  $('tts').className = 'pill ' + (s.tts.ready ? 'ok' : 'warn');
+  $('tts-detail').textContent = (s.tts.voice && !pocket ? 'Ses: ' + s.tts.voice + ' · ' : '') + 'Hazır replik: ' + (s.tts.cached ?? 0) + (s.tts.lastError ? ' · ' + s.tts.lastError : '') + (!pocket && s.tts.provider !== 'azure' ? ' · Ücretsiz Türkçe ses için POCKET_SES_KUR.bat dosyasını aç.' : ''); }
+  const last = s.tts.lastSpeech;
+  if (last) {
+    const source = { pocket: 'Pocket Türkçe · ' + last.voice, azure: 'Azure', local: 'Windows' }[last.provider] || 'ses dosyası yok';
+    $('tts-detail').textContent += ' · Son replik: ' + source + ' — ' + last.text;
+  }
+  // Claude anahtarı: var mı, Anthropic'te doğrulandı mı, nereden geldi; serbest sohbet açık mı.
+  const a = s.ai, linked = a.available && a.verified === true;
+  $('ai').textContent = 'Claude: ' + (linked ? 'bağlı ✓' : a.available ? 'doğrulanıyor…' : a.source ? (a.lastError || 'bağlanamadı') : 'anahtar yok');
+  $('ai').className = 'pill ' + (linked ? 'ok' : a.source || a.available ? 'warn' : '');
+  $('ai-detail').textContent = '(' + (linked ? 'anahtar ' + (a.source === 'oturum' ? 'bu oturum için girildi' : 'kalıcı kayıtlı') + ' · ' + a.model + ' · ' + a.calls + ' cevap isteği' + (s.settings.ai ? '' : ' · şu an kapalı')
+    : a.source || a.available ? (a.lastError || 'doğrulanıyor') : 'anahtar yok: aşağıdan gir ya da CLAUDE_ANAHTARI.bat') + (linked && a.lastError ? ' · son hata: ' + a.lastError : '') + ')';
+  $('bank').textContent = s.bank.count + ' soru' + (s.bank.skipped ? ' (' + s.bank.skipped + ' atlandı)' : '');
+  $('phase').textContent = (PHASE[s.phase] || s.phase) + (paused ? ' · duraklatıldı' : '') + (s.round ? ' · ' + s.round + '. tur ' + s.index + '/' + s.total : '');
+  $('question').textContent = s.q ? s.q.clue + ' → ' + s.q.tiles.map((t) => (t.space ? ' ' : t.ch || '_')).join('') : '—';
+  const people = s.participation?.people || 0;
+  $('people-stats').textContent = (demo ? 'Prova · ' : '') + (people ? `Bu yayında ${people} kişi yorum yazdı.` : 'Henüz yorum gelmedi.');
+  $('viewers').textContent = s.viewers; $('likes').textContent = s.likes.count; $('solved').textContent = s.night.solved; $('record').textContent = s.night.record;
+  $('leaders').replaceChildren(...s.leaders.map((l, i) => { const tr = document.createElement('tr'); for (const v of [i + 1 + '. ' + l.nick + (l.title ? ' · ' + l.title : ''), l.points]) { const td = document.createElement('td'); td.textContent = v; tr.append(td); } return tr; }));
+  for (const button of document.querySelectorAll('button[data-look]')) button.setAttribute('aria-pressed', String(button.dataset.look === s.settings.look));
+  for (const key of ['pace', 'delivery']) if (document.activeElement !== $(key)) $(key).value = s.settings[key];
+  const track = $('timeline'), outcomes = s.outcomes || [], sig = [s.total, s.index, ...outcomes].join('-');
+  if (track.dataset.sig !== sig) {
+    track.dataset.sig = sig;
+    track.replaceChildren(...Array.from({ length: Math.min(s.total, 60) }, (_, i) => {
+      const cell = document.createElement('i'); cell.className = outcomes[i] || (s.index === i + 1 ? 'active' : '');
+      cell.title = (i + 1) + '. soru · ' + ({ solved: 'Bilindi', timeout: 'Süre doldu', active: 'Sahnedeki soru' }[cell.className] || 'Sırada');
+      return cell;
+    }));
+  }
+  if (first) { first = false; for (const k of ['voice', 'music', 'fx']) { $('v-' + k).value = Math.round(s.settings.volumes[k] * 100); $('o-' + k).textContent = $('v-' + k).value; } for (const k of ['followReminder', 'spokenFacts']) $(k).checked = !!s.settings[k]; $('ai-on').checked = !!s.settings.ai; }
+  const log = $('log'), stick = log.scrollTop + log.clientHeight >= log.scrollHeight - 30;
+  log.replaceChildren(...s.log.map((l) => { const d = document.createElement('div'), b = document.createElement('b'); b.textContent = new Date(l.at).toLocaleTimeString('tr-TR') + ' ' + l.tag + ' '; d.append(b, l.text); return d; }));
+  if (stick) log.scrollTop = log.scrollHeight;
+}
+refresh(); setInterval(refresh, 1000);
+</script>
+</body>
+</html>

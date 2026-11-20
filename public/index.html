@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bil Bakalım · yayın sahnesi</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/show.css">
+<link rel="stylesheet" href="/final.css">
+</head>
+<body>
+<main id="viewport" aria-label="Bil Bakalım yayın sahnesi">
+<div id="stage" data-phase="boot">
+  <div id="bg" aria-hidden="true"><i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i><i class="blob b4"></i><div id="motes"></div></div>
+
+  <!-- y 218–288: ad · tur/soru · PROVA -->
+  <header id="top">
+    <div id="logo"><span class="logo-q">?</span><b>BİL</b><i>BAKALIM</i></div>
+    <div id="round"></div>
+    <div id="prova" hidden>PROVA</div>
+  </header>
+
+  <div id="round-track" aria-label="Tur ilerlemesi"></div>
+
+  <!-- y 304–664: soru kartı -->
+  <section id="card">
+    <div id="card-top">
+      <div id="cat"><span id="cat-emoji"></span><span id="cat-name"></span></div>
+    </div>
+    <div id="double" hidden><span>ÇİFTE PUAN</span><b>×2</b></div>
+    <div id="ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="ring-bg" cx="60" cy="60" r="50"/><circle id="ring-fg" class="ring-fg" cx="60" cy="60" r="50"/></svg><span id="ring-num"></span></div>
+    <div id="last">⏳ Son saniyeler! <b id="last-num">5</b></div>
+    <div id="done-badge">🏆</div>
+
+    <div id="next-hint" hidden></div>
+    <div id="qbody">
+      <div id="plate" hidden><span class="plate-tr"><i>TR</i></span><strong id="plate-no"></strong></div>
+      <div id="emoji" hidden></div>
+      <div id="scramble" hidden></div>
+      <p id="clue"></p>
+      <div id="hint" hidden></div>
+    </div>
+
+    <div id="win" class="band">
+      <div class="win-photo"><span id="win-ava" class="ava"></span><span class="win-crown">👑</span></div>
+      <div class="win-text">
+        <div class="win-kicker"><span>🎉 İLK BİLEN</span><span id="win-tags"></span></div>
+        <div class="win-main"><strong id="win-name"></strong><b id="win-points"></b></div>
+        <div id="win-also"></div>
+      </div>
+    </div>
+    <div id="out" class="band">
+      <span class="out-emoji">⏰</span>
+      <div class="out-text"><strong>SÜRE DOLDU!</strong><span>Bu sefer bilen çıkmadı · sıradaki sizin!</span></div>
+    </div>
+
+    <div id="v-intro" class="view">
+      <span id="intro-emoji"></span>
+      <div class="intro-text"><em id="intro-no"></em><strong id="intro-cat"></strong><span id="intro-type"></span></div>
+    </div>
+    <div id="v-lobby" class="view">
+      <em>🎉 HOŞ GELDİN! YARIŞMA BAŞLIYOR</em>
+      <ol><li><b>1</b>İpucunu oku</li><li><b>2</b>Cevabı yorumlara yaz</li><li><b>3</b>İlk bilen puanı kapar</li></ol>
+    </div>
+    <div id="v-break" class="view">
+      <span class="break-emoji">☕</span>
+      <div class="break-text"><strong>SOHBET MOLASI</strong><span>Yeni tur birazdan başlıyor</span><em id="break-champ"></em></div>
+    </div>
+    <!-- sunucunun sohbete sorduğu soru (açılış yoklaması, mola sorusu): kartın tamamı -->
+    <div id="v-chat" class="view">
+      <div id="chat-head"><em id="chat-kick"></em><span id="chat-champ"></span></div>
+      <p id="chat-q"></p>
+    </div>
+  </section>
+
+  <!-- y 678–858: harf kutuları (açılışta şovun adı, molada MOLA) -->
+  <section id="tiles"></section>
+
+  <!-- kürsü: kart + kutu bölgesini kaplar (yalnız podium evresinde) -->
+  <section id="podium">
+    <h2 id="podium-title"></h2>
+    <div id="podium-cols"></div>
+    <p id="podium-empty">🏆<span>Bu turda kürsü boş kaldı, sıradaki tur sizin!</span></p>
+  </section>
+
+  <!-- y 868–932: tahmin şeridi / bilgi şeridi -->
+  <div id="strip">
+    <div id="guesses"></div>
+    <p id="strip-empty">👀 İlk tahmini sen yap!</p>
+    <div id="lane"></div>
+  </div>
+
+  <!-- y 944–1016: tek talimat, her zaman görünür -->
+  <div id="cta"><div class="cta-in"><span class="cta-ico">💬</span><span id="cta-text">Cevabı yorumlara yaz</span></div></div>
+
+  <!-- y > 1020 sunucu bölgesi. Sol: Tarçın (gözleri sohbet alanının üstünde). Sağ sütun (x 700–1040, sohbetin kapatmadığı yer):
+       konuşma balonu · öne çıkanlar / bilgi notu · tur sıralaması + alkış metre · bildirim çipleri (y < 1780) -->
+  <div id="bubble"><span id="bubble-name">TARÇIN</span><p id="bubble-text"></p></div>
+  <div id="host"></div>
+  <div id="desk-logo" aria-hidden="true"><span class="logo-q">?</span><b>BİL</b><i>BAKALIM</i></div>
+
+  <div id="ticker">
+    <div id="hl"><span class="ico"></span><div class="tw"><span class="a"></span><span class="b"></span></div></div>
+    <div id="cap-box"></div>
+  </div>
+  <aside id="board">
+    <h2>🏆 TUR SIRALAMASI</h2>
+    <div id="board-list"></div>
+    <p id="board-empty">İlk bilen<br>zirveye yerleşir!</p>
+    <div id="meter"><span class="meter-ico">❤️</span><div class="meter-bar"><i id="meter-fill"></i></div><b id="meter-text">ALKIŞ</b></div>
+  </aside>
+  <div id="chips"></div>
+
+  <div id="roundcard"></div>
+  <div id="curtain"><i class="cl"></i><i class="cr"></i><div class="curtain-logo"><span class="logo-q">?</span><b>BİL</b><i>BAKALIM</i></div></div>
+  <section id="farewell" hidden aria-label="Yarışma finali">
+    <div class="farewell-brand">BİL BAKALIM <span>✦</span> FİNAL</div>
+    <h1>İyi ki<br><em>geldiniz!</em></h1>
+    <p id="farewell-summary"></p>
+    <ol id="farewell-winners"></ol>
+    <p id="farewell-thanks">Tahmin yazan, izleyen, gülen herkese teşekkürler.</p>
+    <div class="farewell-sign">Sonraki yarışmalar için <strong>takip etmeyi unutmayın!</strong> <b>Tarçın 🐾</b></div>
+  </section>
+  <!-- iki parçacık tuvali: #fx oyunun kendi kutlamaları (soru açıkken kırpılır), #fxh izleyici kutlamaları: beğeni, takip, coşku (kürsü, mola, açılış dışında y > 1020) -->
+  <canvas id="fx" width="1080" height="1920" aria-hidden="true"></canvas>
+  <canvas id="fxh" width="1080" height="1920" aria-hidden="true"></canvas>
+  <div id="conn" hidden></div>
+  <button id="sound" type="button" hidden>🔊 Sesi aç</button>
+</div>
+</main>
+<script type="module" src="/main.js"></script>
+</body>
+</html>

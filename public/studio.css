@@ -1,0 +1,18 @@
+@font-face{font-family:Nunito;src:url('/assets/fonts/Nunito-Variable.ttf')}
+body{background:#151425;font-family:Nunito,"Segoe UI",system-ui,sans-serif}
+header{padding:16px max(22px,calc((100vw - 1456px)/2));background:#222036}
+section{background:#232136;border-color:#45405b;border-radius:17px}
+.studio{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(260px,.8fr);gap:clamp(20px,4vw,66px);background:linear-gradient(115deg,#352b48,#272638 76%);padding:22px 24px}
+.studio h2{font-size:20px;letter-spacing:0;text-transform:none;color:#fff}
+.look-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.look{position:relative;display:grid;justify-items:center;border:2px solid transparent;background:#1c1b2d;color:#ded7eb;overflow:hidden;padding:4px 3px 9px}
+.look:hover{background:#312c44}.look[aria-pressed=true]{border-color:#ffda7e;background:#3d3348;color:#ffda7e}
+.portrait{height:88px;display:block;width:100%;overflow:hidden}.portrait .tc{pointer-events:none}
+.look b{font-size:14px}.look[aria-pressed=true]::after{content:'✓';position:absolute;right:7px;top:4px}
+select,input[type=password]{width:100%;min-height:38px;border:1px solid #5a526b;background:#1a1928;color:#faf4ff;padding:7px 10px;border-radius:8px;font:inherit}
+.key-form{margin-top:16px;border-top:1px solid #433f54;padding-top:10px}.key-form .row{display:grid;grid-template-columns:minmax(0,1fr) auto}
+.msg:empty{display:none}button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #94eedc;outline-offset:2px}
+#voice-sample{margin-top:10px;width:100%;height:36px}.legend{display:flex;flex-wrap:wrap;gap:14px;margin:6px 0 0;font-size:12px;color:#cdc7df}
+.legend i{display:inline-block;width:9px;height:9px;margin-right:4px;border-radius:2px;background:#76e8c8}.legend .missed{background:#ea9894}
+#timeline{display:flex;gap:4px;margin-top:8px}#timeline i{height:8px;flex:1;background:#454156;border-radius:3px}#timeline .active{background:#ffda7e}#timeline .solved{background:#76e8c8}#timeline .timeout{background:#ea9894}
+@media(max-width:740px){.studio{grid-template-columns:1fr}.studio h2{margin-bottom:8px}main{grid-template-columns:minmax(0,1fr);padding:12px}.portrait{height:70px}}

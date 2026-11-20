@@ -1,0 +1,13 @@
+{
+  "port": 8181,
+  "blockedWords": [],
+  "show": {
+    "title": "Bil Bakalım",
+    "host": { "name": "Tarçın" },
+    "perRound": 10,
+    "likeGoal": 300,
+    "tts": { "provider": "auto", "voice": "" },
+    "ai": { "on": true, "model": "claude-opus-5-5" },
+    "source": ""
+  }
+}

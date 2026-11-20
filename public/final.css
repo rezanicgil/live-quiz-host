@@ -1,0 +1,22 @@
+#farewell[hidden]{display:none}
+#farewell{position:absolute;inset:0;z-index:21;box-sizing:border-box;padding:280px 94px 0;color:#fff5dc;
+  background:radial-gradient(ellipse at 14% 68%,#643751 0,transparent 46%),radial-gradient(ellipse at 83% 12%,#374f72 0,transparent 41%),#161b36}
+.farewell-brand{display:flex;align-items:center;gap:22px;color:#f7bf88;font-size:26px;font-weight:900;letter-spacing:.17em}
+.farewell-brand span{color:#89decf}
+#farewell h1{font:900 140px/.91 Nunito,system-ui,sans-serif;letter-spacing:-.065em;margin:47px 0 25px}
+#farewell h1 em{font-style:normal;color:#ffbe90}
+#farewell-summary{font-size:36px;margin:0 0 30px}
+#farewell-winners{display:grid;gap:8px;list-style:none;margin:0;padding:0;max-width:835px}
+#farewell-winners li{display:flex;align-items:center;gap:24px;border-top:2px solid #ffffff38;padding:15px 0;font-size:31px}
+#farewell-winners li b{font-size:24px;color:#8cdccc;width:40px}
+#farewell-winners li span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:800}
+#farewell-winners li strong{margin-left:auto;white-space:nowrap;color:#ffcb94;font-size:28px}
+#farewell-thanks{margin:22px 0 0;max-width:830px;line-height:1.3;font-size:27px;overflow-wrap:anywhere;color:#e6dad9}
+.farewell-sign{position:absolute;top:1215px;left:620px;width:330px;font-size:36px;line-height:1.14}
+.farewell-sign strong{display:block;margin-top:10px;font-size:44px;color:#a8efdc}
+.farewell-sign b{display:block;margin-top:20px;color:#ffbe90;font-size:33px}
+#stage[data-phase=ended] #host{z-index:22}
+#stage[data-phase=ended] #desk-logo{z-index:23}
+#stage[data-phase=ended] #top{z-index:23;pointer-events:none}
+#stage[data-phase=ended] #top>:not(#prova),#stage[data-phase=ended] #conn{visibility:hidden}
+#stage[data-phase=ended] #sound{z-index:24}

@@ -1,0 +1,65 @@
+{
+  "hosgeldin": {
+    "text": "Hoş geldin!",
+    "duration": {
+      "female_2": 1280,
+      "male_2": 1440
+    }
+  },
+  "takip": {
+    "text": "Takibin için teşekkür ederim!",
+    "duration": {
+      "female_2": 1920,
+      "male_2": 2000
+    }
+  },
+  "bildiAni": {
+    "text": "Bildin, tebrikler!",
+    "duration": {
+      "female_2": 1760,
+      "male_2": 1840
+    }
+  },
+  "paylasim": {
+    "text": "Yayını paylaştığın için teşekkürler!",
+    "duration": {
+      "female_2": 2240,
+      "male_2": 2480
+    }
+  },
+  "begeni": {
+    "text": "Beğeniler için teşekkürler!",
+    "duration": {
+      "female_2": 1920,
+      "male_2": 2160
+    }
+  },
+  "sureDoluyor": {
+    "text": "Son saniyeler!",
+    "duration": {
+      "female_2": 1520,
+      "male_2": 1680
+    }
+  },
+  "canoBildi": {
+    "text": "Helal sana, cano!",
+    "duration": {
+      "female_2": 1544,
+      "male_2": 1740
+    }
+  },
+  "canoTesekkur": {
+    "text": "Başımla beraber, cano!",
+    "duration": {
+      "female_2": 1698,
+      "male_2": 1711
+    }
+  },
+  "canoSelam": {
+    "text": "Hoş geldin, cano!",
+    "duration": {
+      "female_2": 1336,
+      "male_2": 1541
+    }
+  }
+}
