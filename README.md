@@ -101,7 +101,14 @@ npm test
 The suite uses Node's built-in test runner. The engine and the director run against an injected clock, the voice module
 against fake worker processes, and one test boots the real server in demo mode.
 
-## Credits
+## How it was built
+
+I built this with AI coding assistants: Claude Code for most of it, ChatGPT for one stretch. They wrote most of the code. I
+set the direction, ran the show on air, and decided what to fix from what happened there.
+
+## Licence and credits
+
+The code and the content are under the [MIT licence](LICENSE). Two things bundled here come from others:
 
 - Voice clips in `public/` were generated with Pocket TTS Turkish by Wite Tech (CC BY 4.0), which is derived from Pocket TTS
   by Kyutai. The voices are synthetic.
