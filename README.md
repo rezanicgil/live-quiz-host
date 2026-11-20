@@ -9,8 +9,8 @@ the show moving through rounds, podiums and breaks with no operator.
 The show's content is Turkish. It is called *Bil Bakalım* ("go on, guess") and its host is a cat named Tarçın.
 
 <p>
-  <img src="docs/stage-ask.png" width="320" alt="A question on stage: the clue, letter tiles, guesses from the chat and the round leaderboard">
-  <img src="docs/stage-solved.png" width="320" alt="A solved question: the winner, and how many seconds later second and third place answered">
+  <img src="docs/stage-ask.jpg" width="320" alt="A question on stage: the clue, letter tiles, guesses from the chat and the round leaderboard">
+  <img src="docs/stage-solved.jpg" width="320" alt="A solved question: the winner, and how many seconds later second and third place answered">
 </p>
 
 *Rehearsal mode with a simulated audience.*
@@ -46,7 +46,7 @@ both pages.
 **Voice.** Out of the box the host speaks through the Windows built-in Turkish voice if it is installed, and otherwise
 shows subtitles with a short synthesized meow. For the voice used on air, run `POCKET_SES_KUR.bat` once: it installs
 [Pocket TTS Turkish](https://huggingface.co/wite-tech/pocket-tts-turkish) into `data/` (needs Python 3.10 or newer, runs
-on CPU).
+on CPU). To reuse an install from another folder, set `POCKET_DIR` to it.
 
 **Chat replies.** Set `ANTHROPIC_API_KEY` to let the host answer free-form chat with Claude. Without it the host uses its
 built-in replies only.
@@ -79,6 +79,9 @@ connector used for those sessions is not part of this repository.
 | 19:27–20:16 | 50 | 5 | 297 | 85 | 549 | 1 |
 | 21:18–21:33 | 16 | 124 | 629 | 30 | 210 | 0 |
 | **Total** | **296** | | **11,033** | **590** | **3,860** | **55** |
+
+The two evening sessions had single-digit audiences and are listed for completeness. The counts include a few answers
+typed by the operator's own account: 10 of the 590 questions were solved first by it.
 
 Two things in the code come straight from those sessions:
 

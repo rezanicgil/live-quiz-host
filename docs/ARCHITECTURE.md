@@ -6,12 +6,12 @@ This document explains how the show is put together and why. The message formats
 
 ```mermaid
 flowchart LR
-  subgraph in [Audience events]
+  subgraph sources [Audience events]
     demo[Demo audience]
     api[HTTP event API]
     src[Custom source module]
   end
-  in --> ingest[server.js<br/>filter and route]
+  sources --> ingest[server.js<br/>filter and route]
   ingest --> engine[engine.js<br/>game state machine]
   ingest --> host[host.js<br/>speech director]
   engine -- effects --> host
@@ -61,8 +61,8 @@ Rules worth knowing:
 - **A round** follows a fixed plan of question types (plain words, licence-plate cities, a scrambled word, a proverb with a
   missing word, an emoji riddle) with rising difficulty.
 - **The answer stays on the server.** The state sent to the stage contains the clue and the open letters only. The full
-  answer leaves the server in a single effect when the grace window closes, so reading the page source or the WebSocket
-  does not help anyone.
+  answer leaves the server only when the question is over: when the grace window closes, or when time runs out. Reading
+  the page source or the WebSocket while a question is open does not help anyone.
 
 ## Photo finish: who was really first
 

@@ -68,7 +68,8 @@ const nowSec = () => Date.now() / 1000;
 const note = (tag, text) => { log.push({ at: Date.now(), tag, text }); if (log.length > 200) log.shift(); };
 const send = (msg) => { const data = JSON.stringify(msg); for (const ws of clients) if (ws.readyState === 1) ws.send(data); };
 
-const tts = createTts({ delivery: settings.delivery, pocketVoice: settings.pocketVoice, provider: process.env.SHOW_TTS || show.tts?.provider || 'auto', voice: show.tts?.voice || undefined, cacheDir: path.join(DATA, 'tts-cache'), maxFiles: 3000, log: (m) => note('ses', m) });
+const tts = createTts({ delivery: settings.delivery, pocketVoice: settings.pocketVoice, provider: process.env.SHOW_TTS || show.tts?.provider || 'auto', voice: show.tts?.voice || undefined, cacheDir: path.join(DATA, 'tts-cache'), maxFiles: 3000, log: (m) => note('ses', m),
+  ...(process.env.POCKET_DIR ? { pocketDir: path.resolve(process.env.POCKET_DIR) } : {}) });   // başka yerde kurulu Pocket'i kullanmak için
 let lastSpeech = null;
 const journal = createJournal({ dir: path.join(DATA, 'show-log'), enabled: !demo });
 let participants = new Set(), breakHistory = [];

@@ -88,9 +88,9 @@ state.
 | `solved` | `user`, `rank`, `points`, `open`, `streak`, `first`, `fast`, `double` | First correct answer, after the photo finish |
 | `alsoCorrect` | `user`, `rank`, `points`, `behind`? | Second and third place |
 | `others` | `count` | How many more answered correctly in the grace window |
-| `answer` | `answer`, `winners` | The grace window closed; the only message that carries the answer |
-| `timeout` | `answer` | Nobody got it |
-| `questionEnd` | `answer`, `fact`, `winners` | |
+| `answer` | `answer`, `winners` | The grace window closed and the answer is revealed |
+| `timeout` | `answer` | Nobody got it; the answer is revealed |
+| `questionEnd` | `answer`, `fact`, `winners` | Follows `answer` or `timeout`. Nothing sent before those two contains the answer. |
 | `levelUp` | `user`, `title` | A returning player earned a new title |
 | `record` | `solved` | The show passed its previous record of solved questions |
 | `roundEnd` | `round`, `podium`, `champion` | |
