@@ -814,14 +814,21 @@ window.addEventListener('pageshow', (e) => { if (e.persisted) location.reload();
 
 /* ---------- ses düğmesi: tarayıcı sesi askıya aldıysa görünür; OBS'te ses kendiliğinden başlar ---------- */
 const soundBtn = $('sound');
-const syncSound = () => { soundBtn.hidden = sound.state !== 'suspended'; };
+// Ses varsayılan olarak açıktır; tarayıcı izin vermediyse düğme görünür ve sayfaya ilk dokunuş sesi açar (sound.js).
+// Ses sonradan açıldıysa kısa bir zil çalar ve sunucusuz demo açılıştan yeniden başlar: ziyaretçi şovu baştan, sesli izler.
+let mock = null, startedLocked = false, announced = false;
+const syncSound = () => {
+  soundBtn.hidden = !sound.locked;
+  if (sound.locked) startedLocked = true;
+  else if (startedLocked && !announced) { announced = true; sound.play('ding'); mock?.restart?.(); }
+};
 sound.onState(syncSound); soundBtn.onclick = () => sound.unlock().then(syncSound);
 sound.music(true); setTimeout(syncSound, 300);
 
 async function main() {
   try { await Promise.race([Promise.all([document.fonts.load('900 40px Nunito'), document.fonts.ready]), new Promise((r) => setTimeout(r, 2500))]); } catch { /* yazı tipi gecikse de sahne açılır */ }
   setTitle(S.title); updateConn();
-  if (MOCK) { const { startMock } = await import('./mock.js'); startMock(deliver, { scene: params.get('scene') }); }
+  if (MOCK) { const { startMock } = await import('./mock.js'); mock = startMock(deliver, { scene: params.get('scene') }); }
   else connect();
 }
 window.__show = { deliver, host, sound, fx, fxh, get state() { return S.st; }, get phase() { return S.phase; } };

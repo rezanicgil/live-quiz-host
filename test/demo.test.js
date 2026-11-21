@@ -40,3 +40,48 @@ test('sahne alt klasörden açılabilir: sayfa, betikler ve stiller kök dizine 
     assert.deepEqual(rooted, [], name);
   }
 });
+
+/* ---------- ses kilidi (mobil) ---------- */
+/** sound.js'in kurulurken dokunduğu kadarını karşılayan sahte ses bağlamı. */
+function fakeAudio(initial) {
+  const param = () => ({ value: 0, setValueAtTime() {}, linearRampToValueAtTime() {}, exponentialRampToValueAtTime() {}, setTargetAtTime() {}, cancelScheduledValues() {} });
+  const node = () => new Proxy({ connect() {}, disconnect() {}, start() {}, stop() {} }, { get: (t, k) => (k in t ? t[k] : (t[k] = param())), set: (t, k, v) => { t[k] = v; return true; } });
+  return class {
+    constructor() { this.state = initial; this.sampleRate = 100; this.currentTime = 0; this.destination = node(); this.resumes = 0; }
+    createGain() { return node(); } createDynamicsCompressor() { return node(); } createAnalyser() { return node(); } createBiquadFilter() { return node(); }
+    createOscillator() { return node(); } createBufferSource() { return node(); } createBuffer(channels, length) { return { getChannelData: () => new Float32Array(length) }; }
+    resume() { this.resumes += 1; this.state = 'running'; this.onstatechange?.(); return Promise.resolve(); }
+  };
+}
+test('ses: bağlam çalışmıyorsa kilitli sayılır, sayfaya ilk dokunuş açar; iPhone sessiz tuşu için oturum türü ayarlanır', async (t) => {
+  const { createSound } = await import('../public/sound.js');
+  const old = globalThis.window; t.after(() => { if (old === undefined) delete globalThis.window; else globalThis.window = old; });
+  for (const initial of ['suspended', 'interrupted']) {
+    const events = {}, session = { type: 'auto' };
+    globalThis.window = { AudioContext: fakeAudio(initial), navigator: { audioSession: session }, addEventListener: (type, fn) => { events[type] = fn; } };
+    const sound = createSound(), states = []; sound.onState((s) => states.push(s));
+    assert.equal(session.type, 'playback', 'sessiz tuşu Web Audio sesini kısmasın');
+    assert.equal(sound.locked, true, initial + ' durumunda ses kilitli');
+    assert.deepEqual(Object.keys(events).sort(), ['click', 'keydown', 'pointerdown', 'pointerup', 'touchend'], 'iOS dokunuşun bitişini hareket sayar');
+    events.touchend(); assert.equal(sound.locked, false); assert.deepEqual(states, ['running']);
+  }
+  globalThis.window = { AudioContext: fakeAudio('running'), addEventListener() {} };
+  assert.equal(createSound().locked, false, 'ses baştan çalışıyorsa düğme hiç görünmez');
+  globalThis.window = {};
+  assert.equal(createSound().locked, false, 'ses bağlamı olmayan tarayıcıda düğme görünmez');
+});
+
+test('demo: ses sonradan açılınca şov açılıştan yeniden başlar', async (t) => {
+  t.mock.timers.enable({ apis: ['setTimeout', 'setInterval', 'Date'] });
+  const { startMock } = await import('../public/mock.js');
+  const seen = [], mock = startMock((m) => seen.push(m));
+  const state = () => seen.findLast((m) => m.t === 'state');
+  const advance = (ms) => { for (let at = 0; at < ms; at += 100) t.mock.timers.tick(100); };   // iç içe kurulan zamanlayıcılar sırayla çalışsın
+  advance(30000);
+  assert.equal(state().phase, 'ask'); assert.equal(state().index, 1); const clue = state().q.clue;
+  seen.length = 0; mock.restart();
+  assert.deepEqual([state().phase, state().round, state().index], ['lobby', 1, 0]); assert.ok(seen.some((m) => m.t === 'fx' && m.list.some((f) => f.type === 'lobby')));
+  advance(26000);
+  assert.deepEqual([state().phase, state().index, state().q.clue], ['ask', 1, clue], 'aynı ilk soruyla baştan');
+  assert.deepEqual(startMock(() => {}, { scene: 'ask' }), {}, 'donmuş sahnede yeniden başlatma yok');
+});

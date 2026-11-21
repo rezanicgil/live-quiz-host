@@ -362,7 +362,7 @@ body{display:grid;place-items:center}
 #stage[data-phase=ask] #fx{clip-path:inset(1020px 0 0 0)}
 #stage:not([data-phase=lobby]):not([data-phase=podium]):not([data-phase=break]) #fxh{clip-path:inset(1020px 0 0 0)}
 #conn{position:absolute;left:48px;bottom:26px;max-width:640px;height:46px;padding:0 18px;border-radius:23px;background:rgba(18,12,52,.92);border:2px solid var(--pink);display:flex;align-items:center;font-size:22px;font-weight:900;color:#FFD9E4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:9}
-#sound{position:absolute;left:50%;bottom:150px;margin-left:-150px;width:300px;height:84px;border:4px solid #fff;border-radius:42px;background:var(--pink);color:#fff;font:1000 36px Nunito,system-ui,sans-serif;cursor:pointer;z-index:9;box-shadow:0 8px 0 #C2345F,0 20px 40px rgba(0,0,0,.5);animation:ctaPulse 1s ease-in-out infinite alternate}
+#sound{position:absolute;left:50%;bottom:150px;margin-left:-330px;width:660px;height:124px;border:5px solid #fff;border-radius:62px;background:var(--pink);color:#fff;font:1000 46px Nunito,system-ui,sans-serif;cursor:pointer;z-index:9;box-shadow:0 8px 0 #C2345F,0 20px 40px rgba(0,0,0,.5);animation:ctaPulse 1s ease-in-out infinite alternate}
 @keyframes ctaPulse{from{transform:scale(1)}to{transform:scale(1.05)}}
 @media(prefers-reduced-motion:reduce){
   #stage *,#stage *::before,#stage *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}

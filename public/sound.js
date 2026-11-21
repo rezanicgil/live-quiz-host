@@ -2,6 +2,7 @@
 //   createSound() → {
 //     state            'running' | 'suspended' | 'closed' | 'none'
 //     unlock()         tarayıcı sesi askıya aldıysa kullanıcı dokunuşuyla açar
+//     locked           ses bağlamı var ama çalışmıyor mu (askıda ya da kesintide): ilk dokunuş bekleniyor
 //     onState(cb)      durum değişince cb(state)
 //     setVolumes({voice,music,fx})
 //     say({url,ms,text,voiceEnabled}) → { level():0..1, done:Promise, stop() }
@@ -25,6 +26,9 @@ export function createSound() {
   const AC = window.AudioContext || window.webkitAudioContext;
   let ctx = null;
   try { ctx = AC ? new AC({ latencyHint: 'playback' }) : null; } catch { ctx = null; }
+  // iPhone'da sessiz tuşu açıkken Web Audio hiç duyulmaz. Oturum türü "playback" olunca (Safari 16.4+) tuş bu sesi kısmaz;
+  // video izlerken olduğu gibi yalnız ses düğmeleri geçerli olur.
+  try { if (window.navigator?.audioSession) window.navigator.audioSession.type = 'playback'; } catch { /* desteklenmiyor */ }
   const vol = { voice: 1, music: 0.25, fx: 0.8 };
   let murmurStyle = 'miyav';   // ses kaydı yokken: 'miyav' | 'bip' | 'off' (panelden seçilir)
   const listeners = new Set();
@@ -50,8 +54,10 @@ export function createSound() {
     noiseBuf = ctx.createBuffer(1, sr * 2, sr);
     const nd = noiseBuf.getChannelData(0); for (let i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
     ctx.onstatechange = () => { for (const cb of listeners) cb(ctx.state); if (ctx.state === 'running' && musicOn) startMusic(); };
-    const auto = () => { if (ctx.state === 'suspended') ctx.resume().catch(() => {}); };
-    window.addEventListener('pointerdown', auto); window.addEventListener('keydown', auto);
+    // Tarayıcı sesi kullanıcı dokunana kadar bekletir. Sayfanın herhangi bir yerine ilk dokunuş sesi açar. iOS yalnız
+    // dokunuşun BİTİŞİNİ (touchend, click) kullanıcı hareketi sayar; ayrıca askıdan başka "interrupted" durumu da vardır.
+    const auto = () => { if (ctx.state !== 'running') ctx.resume().catch(() => {}); };
+    for (const type of ['pointerdown', 'pointerup', 'touchend', 'click', 'keydown']) window.addEventListener?.(type, auto, true);
   }
   const running = () => !!ctx && ctx.state === 'running';
 
@@ -318,6 +324,7 @@ export function createSound() {
 
   return {
     get state() { return ctx ? ctx.state : 'none'; },
+    get locked() { return !!ctx && ctx.state !== 'running'; },
     get volumes() { return { ...vol }; },
     unlock() { return ctx ? ctx.resume().catch(() => {}) : Promise.resolve(); },
     onState(cb) { listeners.add(cb); return () => listeners.delete(cb); },

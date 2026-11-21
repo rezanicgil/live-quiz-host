@@ -292,6 +292,13 @@ export function startMock(deliver, { scene = null } = {}) {
 
   send({ t: 'hello', build: 'mock', demo: true, title: 'Bil Bakalım', host: { name: 'Tarçın' } });
   setInterval(() => { if (!frozen) st.timeLeft = Math.max(0, st.timeTotal - (Date.now() - phaseStart) / 1000); push(); }, 500);
-  if (scene && SCENES[scene]) { frozen = true; SCENES[scene](); }
-  else { seed([]); lobby(); social(); }
+  if (scene && SCENES[scene]) { frozen = true; SCENES[scene](); return {}; }
+  seed([]); lobby(); social();
+  /** Şovu açılıştan yeniden başlatır (ziyaretçi sesi sonradan açtığında açılışı sesli duysun diye). */
+  function restart() {
+    clearT(); cur = null; winners = null; podium = null; bankAt = 0; breakAt = 0; scores = new Map();
+    Object.assign(st, { round: 1, index: 0, double: false, outcomes: [], chat: null, highlights: { active: 0, streak: null, fast: null, firstTimers: 0 } });
+    lobby();
+  }
+  return { restart };
 }
